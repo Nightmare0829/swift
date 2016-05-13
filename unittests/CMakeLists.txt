@@ -26,13 +26,21 @@ function(add_swift_unittest test_dirname)
   if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
     set_property(TARGET "${test_dirname}" APPEND_STRING PROPERTY
       LINK_FLAGS " -Xlinker -rpath -Xlinker ${SWIFT_LIBRARY_OUTPUT_INTDIR}/swift/macosx")
+
+    if(SWIFT_ANALYZE_CODE_COVERAGE)
+      set_property(TARGET "${test_dirname}" APPEND_STRING PROPERTY
+        LINK_FLAGS " -fprofile-instr-generate -fcoverage-mapping")
+    endif()
+  elseif(${SWIFT_ENABLE_GOLD_LINKER})
+    set_property(TARGET "${test_dirname}" APPEND_STRING PROPERTY
+      LINK_FLAGS " -fuse-ld=gold")
   endif()
 endfunction()
 
 if(SWIFT_BUILD_TOOLS)
   # We can't link C++ unit tests unless we build the tools.
 
-  add_subdirectory(Availability)
+  add_subdirectory(AST)
   add_subdirectory(Basic)
   add_subdirectory(Driver)
   add_subdirectory(IDE)
@@ -44,6 +52,7 @@ if(SWIFT_BUILD_TOOLS)
     #
     # FIXME: cross-compile runtime unittests.
     add_subdirectory(runtime)
+    add_subdirectory(Reflection)
   endif()
 
   if(SWIFT_BUILD_SOURCEKIT)

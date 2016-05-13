@@ -87,7 +87,7 @@ objects::
   point = point1
   point0.x = x
   point = point0
-  
+
 Note that ``point.y`` is left unchanged.
 
 Local analysis
@@ -157,7 +157,7 @@ through unexpected aliases::
 Note that, in either solution, you've introduced extra full-value
 loads.  This may be quite expensive, and it's not guaranteed to be
 semantically equivalent.
-  
+
 Performance
 ~~~~~~~~~~~
 
@@ -168,7 +168,7 @@ Unnecessary subobject accesses
 
 The first is that they may load or store more than is necessary.
 
-As an obvious example, imagine a variable of type ``(Int,Int)``; even
+As an obvious example, imagine a variable of type ``(Int, Int)``; even
 if my code only accesses the first element of the tuple, full-value
 accesses force me to read or write the second element as well.  That
 means that, even if I'm purely overwriting the first element, I
@@ -177,7 +177,7 @@ value to use for the second element when performing the full-value
 store.
 
 Additionally, while unnecessarily loading the second element of an
-``(Int,Int)`` pair might seem trivial, consider that the tuple could
+``(Int, Int)`` pair might seem trivial, consider that the tuple could
 actually have twenty elements, or that the second element might be
 non-trivial to copy (e.g. if it's a retainable pointer).
 
@@ -434,7 +434,7 @@ completing the operation.  This can present the opportunity for
 corruption if the interleaved code modifies the original value.
 Consider the following code::
 
-  func operate(inout value: Int, count: Int) { ... }
+  func operate(value: inout Int, count: Int) { ... }
 
   var array: [Int] = [1,2,3,4]
   operate(&array[0], { array = []; return 0 }())
@@ -453,8 +453,8 @@ Nor can this be fixed with a purely local analysis; consider::
 
   class C { var array: [Int] }
   let global_C = C()
-  
-  func assign(inout value: Int) {
+
+  func assign(value: inout Int) {
     C.array = []
     value = 0
   }
@@ -606,7 +606,7 @@ General solutions
 ~~~~~~~~~~~~~~~~~
 
 A language generally has six tools for dealing with code it considers
-undesireable.  Some of this terminology is taken from existing
+undesirable.  Some of this terminology is taken from existing
 standards, others not.
 
 * The language may nonetheless take steps to ensure that the code
@@ -704,9 +704,9 @@ that was technically copied beforehand.  For example::
   var oldArray : [Int] = []
 
   // This function copies array before modifying it, but because that
-  // copy is of an value undergoing modification, the copy will use
+  // copy is of a value undergoing modification, the copy will use
   // the same buffer and therefore observe updates to the element.
-  func foo(inout element: Int) {
+  func foo(element: inout Int) {
     oldArray = array
     element = 4
   }
@@ -781,7 +781,7 @@ depend on how the l-value is used:
 
   Example::
 
-    func swap<T>(inout lhs: T, inout rhs: T) {}
+    func swap<T>(lhs: inout T, rhs: inout T) {}
 
     // object is a variable of class type
     swap(&leftObject.array, &rightObject.array)
@@ -856,7 +856,7 @@ depend on how the l-value is used:
   that ``left`` contains a value::
 
     // begin FA for ? operand left (DSN={})
-    // instataneous FA reading right (DSN={})
+    // instantaneous FA reading right (DSN={})
     // begin FA for inout argument left?.member (DSN={lhs})
     // evaluation of +=
     // end FA for inout argument left?.member
@@ -916,7 +916,7 @@ I'm almost ready to state the core rule about formal accesses, but
 first I need to build up a few more definitions.
 
 An *abstract storage location* (ASL) is:
-  
+
 * a global variable declaration;
 
 * an ``inout`` parameter declaration, along with a reference
@@ -1027,7 +1027,7 @@ summary of the rule being proposed.
 
 If storage is passed to an ``inout`` argument, then any other
 simultaneous attempt to read or write to that storage, including to
-the storage containing it, will have have unspecified behavior.  Reads
+the storage containing it, will have unspecified behavior.  Reads
 from it may see partially-updated values, or even values which will
 change as modifications are made to the original storage; and writes
 may be clobbered or simply disappear.
@@ -1106,8 +1106,8 @@ the other FA's DSN set and (2) not from a non-overlapping subobject.
 Are these conditions true?
 
 Recall that an addressor is invoked for an l-value of the form::
-  
-  base.memory
+
+  base.pointee
 
 or::
 
@@ -1296,7 +1296,7 @@ Code generation patterns
 The signatures and access patterns for addressors will need to change
 in order to ensure memory-safety.
 
-``mutableAddress`` currentlys returns an ``UnsafeMutablePointer``; it
+``mutableAddress`` currently returns an ``UnsafeMutablePointer``; it
 will need to return ``(Builtin.NativeObject?, UnsafeMutablePointer)``.
 The owner pointer must be a native object; we cannot efficiently
 support either uniqueness checking or the NSM bit on non-Swift

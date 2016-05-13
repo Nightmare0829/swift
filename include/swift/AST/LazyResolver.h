@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2015 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See http://swift.org/LICENSE.txt for license information
@@ -18,7 +18,7 @@
 #define SWIFT_AST_LAZYRESOLVER_H
 
 #include "swift/AST/TypeLoc.h"
-#include "llvm/ADT/Fixnum.h"
+#include "llvm/ADT/PointerEmbeddedInt.h"
 
 namespace swift {
 
@@ -40,17 +40,6 @@ class ValueDecl;
 class LazyResolver {
 public:
   virtual ~LazyResolver();
-
-  /// Completely check the given normal protocol conformance.
-  ///
-  /// \param conformance The normal protocol conformance.
-  ///
-  /// FIXME: We shouldn't need this as an entry to the lazy resolver, because
-  /// completely checking of conformances is only interesting when we're doing
-  /// complete checking of the declaration context. However, it is needed now
-  /// to maintain the order of checking, because resolveTypeWitness/
-  /// resolveWitness aren't lazy enough.
-  virtual void checkConformance(NormalProtocolConformance *conformance) = 0;
 
   /// Resolve the type witnesses for the given associated type within the given
   /// protocol conformance.
@@ -129,12 +118,8 @@ public:
   /// Populates the given vector with all member decls for \p D.
   ///
   /// The implementation should add the members to D.
-  ///
-  /// \param[out] hasMissingRequiredMembers If present, set to true if any
-  /// members failed to import and were non-optional protocol requirements.
   virtual void
-  loadAllMembers(Decl *D, uint64_t contextData,
-                 bool *hasMissingRequiredMembers = nullptr) {
+  loadAllMembers(Decl *D, uint64_t contextData) {
     llvm_unreachable("unimplemented");
   }
 
@@ -164,7 +149,7 @@ public:
 /// A placeholder for either an array or a member loader.
 template <typename T>
 class LazyLoaderArray {
-  using LengthTy = llvm::Fixnum<31>;
+  using LengthTy = llvm::PointerEmbeddedInt<size_t, 31>;
   PointerUnion<LengthTy, LazyMemberLoader *> lengthOrLoader;
   uint64_t data = 0;
 public:

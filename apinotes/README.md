@@ -25,7 +25,7 @@ Swift signatures of imported Objective-C APIs. Compiled API notes
 files reside in the Swift module directory, i.e., the same directory
 where the `.swiftmodule` file would reside for the Swift overlay of
 that module. For system modules, the path depends on the platform
-and architecture
+and architecture.
 
 Platform  | Path
 :------------- | :-------------
@@ -44,7 +44,7 @@ Swift compiler itself need not be recompiled except in rare cases
 where the changes affect how the SDK overlays are built. To recompile
 API notes for a given module `$MODULE` and place them into their 
 
-### OSX
+### OS X
 ```
 xcrun swift -apinotes -yaml-to-binary -target x86_64-apple-macosx10.10 -o $SWIFT_EXEC/lib/swift/macosx/$MODULE.apinotesc $MODULE.apinotes
 ```

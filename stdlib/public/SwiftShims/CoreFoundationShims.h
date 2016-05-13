@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2015 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See http://swift.org/LICENSE.txt for license information
@@ -20,6 +20,10 @@
 #define SWIFT_STDLIB_SHIMS_COREFOUNDATIONSHIMS_H
 
 #include "SwiftStdint.h"
+
+#ifdef __cplusplus
+namespace swift { extern "C" {
+#endif
 
 #ifdef __OBJC2__
 #if __LLP64__
@@ -90,6 +94,10 @@ _swift_stdlib_CFStringFindWithOptions(_swift_shims_CFStringRef __nonnull theStri
 
 _swift_shims_CFStringRef __nonnull _swift_stdlib_objcDebugDescription(id __nonnull nsObject);
 #endif // __OBJC2__
+
+#ifdef __cplusplus
+}} // extern "C", namespace swift
+#endif
 
 #endif // SWIFT_STDLIB_SHIMS_COREFOUNDATIONSHIMS_H
 

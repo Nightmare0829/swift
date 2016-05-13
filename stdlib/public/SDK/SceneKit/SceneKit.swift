@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2015 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2016 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See http://swift.org/LICENSE.txt for license information
@@ -69,10 +69,10 @@ extension SCNVector4 {
     self.w = SCNFloat(w)
   }
   public init(_ x: CGFloat, _ y: CGFloat, _ z: CGFloat, _ w: CGFloat) {
-    self.x = SCNFloat(x)
-    self.y = SCNFloat(y)
-    self.z = SCNFloat(z)
-    self.w = SCNFloat(w)
+    self.x = SCNFloat(x as NSNumber)
+    self.y = SCNFloat(y as NSNumber)
+    self.z = SCNFloat(z as NSNumber)
+    self.w = SCNFloat(w as NSNumber)
   }
   public init(_ x: Double, _ y: Double, _ z: Double, _ w: Double) {
     self.init(SCNFloat(x), SCNFloat(y), SCNFloat(z), SCNFloat(w))
@@ -121,7 +121,8 @@ extension SCNMatrix4 {
 
 extension float4x4 {
   public init(_ m: SCNMatrix4) {
-    self.init([ float4(Float(m.m11), Float(m.m12), Float(m.m13), Float(m.m14)),
+    self.init([
+      float4(Float(m.m11), Float(m.m12), Float(m.m13), Float(m.m14)),
       float4(Float(m.m21), Float(m.m22), Float(m.m23), Float(m.m24)),
       float4(Float(m.m31), Float(m.m32), Float(m.m33), Float(m.m34)),
       float4(Float(m.m41), Float(m.m42), Float(m.m43), Float(m.m44))
@@ -131,7 +132,8 @@ extension float4x4 {
 
 extension double4x4 {
   public init(_ m: SCNMatrix4) {
-    self.init([ double4(Double(m.m11), Double(m.m12), Double(m.m13), Double(m.m14)),
+    self.init([
+      double4(Double(m.m11), Double(m.m12), Double(m.m13), Double(m.m14)),
       double4(Double(m.m21), Double(m.m22), Double(m.m23), Double(m.m24)),
       double4(Double(m.m31), Double(m.m32), Double(m.m33), Double(m.m34)),
       double4(Double(m.m41), Double(m.m42), Double(m.m43), Double(m.m44))
@@ -141,22 +143,22 @@ extension double4x4 {
 
 // MARK: APIs refined for Swift
 
-@available(iOS, introduced=8.0)
-@available(OSX, introduced=10.8)
+@available(iOS, introduced: 8.0)
+@available(OSX, introduced: 10.8)
 extension SCNGeometryElement {
-  public convenience init<IndexType : IntegerType>(
+  public convenience init<IndexType : Integer>(
     indices: [IndexType], primitiveType: SCNGeometryPrimitiveType
   ) {
     let indexCount = indices.count
     let primitiveCount: Int
     switch primitiveType {
-    case .Triangles:
+    case .triangles:
       primitiveCount = indexCount / 3
-    case .TriangleStrip:
+    case .triangleStrip:
       primitiveCount = indexCount - 2
-    case .Line:
+    case .line:
       primitiveCount = indexCount / 2
-    case .Point:
+    case .point:
       primitiveCount = indexCount
     }
     self.init(
@@ -170,17 +172,17 @@ extension SCNGeometryElement {
 @warn_unused_result
 @_silgen_name("SCN_Swift_SCNSceneSource_entryWithIdentifier")
 internal func SCN_Swift_SCNSceneSource_entryWithIdentifier(
-  self_: AnyObject,
+  _ self_: AnyObject,
   _ uid: NSString,
   _ entryClass: AnyObject) -> AnyObject?
 
-@available(iOS, introduced=8.0)
-@available(OSX, introduced=10.8)
+@available(iOS, introduced: 8.0)
+@available(OSX, introduced: 10.8)
 extension SCNSceneSource {
   @warn_unused_result
-  public func entryWithIdentifier<T>(uid: String, withClass entryClass: T.Type) -> T? {
+  public func entryWithIdentifier<T>(_ uid: String, withClass entryClass: T.Type) -> T? {
     return SCN_Swift_SCNSceneSource_entryWithIdentifier(
-      self, uid, entryClass as! AnyObject) as! T?
+      self, uid as NSString, entryClass as! AnyObject) as! T?
   }
 }
 

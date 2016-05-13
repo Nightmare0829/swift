@@ -7,6 +7,7 @@ import Dispatch
 import Foundation
 import StdlibUnittest
 
+
 defer { runAllTests() }
 
 var DispatchAPI = TestSuite("DispatchAPI")
@@ -32,7 +33,7 @@ DispatchAPI.test("OS_OBJECT support") {
 DispatchAPI.test("dispatch_block_t conversions") {
   var counter = 0
   let closure = { () -> Void in
-    counter++
+    counter += 1
   }
 
   let block = closure as dispatch_block_t
@@ -46,7 +47,7 @@ DispatchAPI.test("dispatch_block_t conversions") {
 
 if #available(OSX 10.10, iOS 8.0, *) {
   DispatchAPI.test("dispatch_block_t identity") {
-    let block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
+    let block: dispatch_block_t = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
       _ = 1
     }
 
@@ -58,8 +59,8 @@ if #available(OSX 10.10, iOS 8.0, *) {
   DispatchAPI.test("dispatch_block_t conversions with dispatch_block_create") {
     var counter = 0
 
-    let block = dispatch_block_create(dispatch_block_flags_t(0)) {
-      counter++
+    let block: dispatch_block_t = dispatch_block_create(dispatch_block_flags_t(0)) {
+      counter += 1
     }
     block()
     expectEqual(1, counter)

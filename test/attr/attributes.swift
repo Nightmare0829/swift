@@ -8,7 +8,7 @@ enum binary {
   init() { self = .Zero }
 }
 
-func f5(inout x: binary) {}
+func f5(x: inout binary) {}
 
 //===---
 //===--- IB attributes
@@ -41,15 +41,11 @@ class Inspect {
 @IBInspectable var ibinspectable_global : Int // expected-error {{only instance properties can be declared @IBInspectable}} {{1-16=}}
 
 
-@objc_block  // expected-error {{attribute can only be applied to types, not declarations}}
-func foo() {}
-func foo(x: @convention(block) Int) {} // expected-error {{attribute only applies to syntactic function types}}
+func foo(x: @convention(block) Int) {} // expected-error {{@convention attribute only applies to function types}}
 func foo(x: @convention(block) (Int) -> Int) {}
 
 @_transparent
 func zim() {}
-@_transparent
-func zang()() {} // expected-warning{{curried function declaration syntax will be removed in a future version of Swift}}
 @_transparent
 func zung<T>(_: T) {}
 @_transparent // expected-error{{@_transparent cannot be applied to stored properties}} {{1-15=}}
@@ -228,3 +224,6 @@ class B {
 class SILStored {
   @sil_stored var x : Int = 42  // expected-error {{'sil_stored' only allowed in SIL modules}}
 }
+
+@_show_in_interface protocol _underscored {}
+@_show_in_interface class _notapplicable {} // expected-error {{may only be used on 'protocol' declarations}}
